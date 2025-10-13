@@ -1,22 +1,11 @@
-import PropTypes from "prop-types"
-import styles from "./styles/EventListItem.module.css"
+import { parseLocalDate } from "@/utils/parseLocalDate";
+import PropTypes from "prop-types";
+import styles from "./styles/EventListItem.module.css";
 
-// 🧭 Interpreta corretamente datas AAAA-MM-DD ou ISO (mantendo o dia correto)
-const parseLocalDate = (dateString) => {
-    if (!dateString) return new Date()
-
-    if (dateString.includes("T")) {
-        const date = new Date(dateString)
-        return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
-    }
-
-    const [year, month, day] = dateString.split("-").map(Number)
-    return new Date(Date.UTC(year, month - 1, day))
-}
-
+// 🗓️ Item da lista de eventos (compacto)
 const EventListItem = ({ event }) => {
     const formatDate = (dateString) => {
-        const date = parseLocalDate(dateString)
+        const date = parseLocalDate(dateString);
         return {
             day: date.getUTCDate().toString().padStart(2, "0"),
             month: date
@@ -24,14 +13,12 @@ const EventListItem = ({ event }) => {
                 .replace(".", "")
                 .toUpperCase(),
             year: date.getUTCFullYear(),
-        }
-    }
+        };
+    };
 
-    const formatTime = (timeString) => {
-        return timeString ? timeString.substring(0, 5) : ""
-    }
+    const formatTime = (timeString) => (timeString ? timeString.substring(0, 5) : "");
 
-    const dateInfo = formatDate(event.event_date)
+    const dateInfo = formatDate(event.event_date);
 
     return (
         <div className={styles.eventListItem}>
@@ -49,8 +36,8 @@ const EventListItem = ({ event }) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 EventListItem.propTypes = {
     event: PropTypes.shape({
@@ -59,6 +46,6 @@ EventListItem.propTypes = {
         event_time: PropTypes.string,
         location: PropTypes.string.isRequired,
     }).isRequired,
-}
+};
 
-export default EventListItem
+export default EventListItem;

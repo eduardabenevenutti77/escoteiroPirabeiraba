@@ -1,46 +1,34 @@
-import PropTypes from "prop-types"
-import styles from "./styles/EventCard.module.css"
+import { parseLocalDate } from "@/utils/parseLocalDate";
+import PropTypes from "prop-types";
+import styles from "./styles/EventCard.module.css";
 
-// 🧭 Função robusta que interpreta corretamente o formato da data (AAAA-MM-DD ou ISO)
-const parseLocalDate = (dateString) => {
-    if (!dateString) return new Date()
-
-    // Trata formato ISO (ex: 2025-10-13T00:00:00Z)
-    if (dateString.includes("T")) {
-        const date = new Date(dateString)
-        return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
-    }
-
-    // Trata formato AAAA-MM-DD
-    const [year, month, day] = dateString.split("-").map(Number)
-    return new Date(Date.UTC(year, month - 1, day))
-}
-
+// 🗓️ Componente que exibe um evento em formato de card
 const EventCard = ({ event }) => {
+    // 📅 Data completa (ex: 13 de outubro de 2025)
     const formatDate = (dateString) => {
-        if (!dateString) return ""
-        const date = parseLocalDate(dateString)
+        if (!dateString) return "";
+        const date = parseLocalDate(dateString);
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "long",
             year: "numeric",
             timeZone: "UTC",
-        })
-    }
+        });
+    };
 
+    // 📆 Dia e mês abreviado (ex: 13/10)
     const formatDateMonth = (dateString) => {
-        if (!dateString) return ""
-        const date = parseLocalDate(dateString)
+        if (!dateString) return "";
+        const date = parseLocalDate(dateString);
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
             timeZone: "UTC",
-        })
-    }
+        });
+    };
 
-    const formatTime = (timeString) => {
-        return timeString ? timeString.substring(0, 5) : ""
-    }
+    // ⏰ Apenas hora e minuto
+    const formatTime = (timeString) => (timeString ? timeString.substring(0, 5) : "");
 
     return (
         <div className={styles.eventCard}>
@@ -70,22 +58,18 @@ const EventCard = ({ event }) => {
 
                     <div className={styles.eventDetail}>
                         <span className={styles.detailIcon}>📅</span>
-                        <span className={styles.detailText}>
-                            {formatDate(event.event_date)}
-                        </span>
+                        <span className={styles.detailText}>{formatDate(event.event_date)}</span>
                     </div>
 
                     <div className={styles.eventDetail}>
                         <span className={styles.detailIcon}>🕐</span>
-                        <span className={styles.detailText}>
-                            {formatTime(event.event_time)}
-                        </span>
+                        <span className={styles.detailText}>{formatTime(event.event_time)}</span>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 EventCard.propTypes = {
     event: PropTypes.shape({
@@ -95,6 +79,6 @@ EventCard.propTypes = {
         event_date: PropTypes.string.isRequired,
         event_time: PropTypes.string,
     }).isRequired,
-}
+};
 
-export default EventCard
+export default EventCard;
