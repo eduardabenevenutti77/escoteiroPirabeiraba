@@ -1,6 +1,7 @@
 import styles from "./styles/Projects.module.css";
 import { EmblaCarousel } from "../EmblaCarousel";
 import { Link } from "react-router-dom";
+import EventSlider from "../General/Slider";
 
 export default function Projects() {
   return (
@@ -69,6 +70,9 @@ export default function Projects() {
           <img loading="lazy" src={img4} width={400} height={300} alt="" />
         </figure> */}
         <EmblaCarousel />
+      </section>
+      <section className={styles.projectsSlider}>
+        <EventSlider />
       </section>
     </>
   );

@@ -1,6 +1,6 @@
 ---
 
-# Sistema Web para o Grupo de Escoteiros de Pirabeira - SC
+# Sistema Web para o Grupo de Escoteiro Pirabeira - SC
 
 Este repositório contém o código-fonte do sistema web desenvolvido como parte de um projeto de extensão para o Grupo de Escoteiros de Pirabeira, em Santa Catarina. O objetivo do sistema é facilitar a gestão de atividades, membros e eventos do grupo, promovendo uma comunicação mais eficaz entre líderes, pais e escoteiros.
 

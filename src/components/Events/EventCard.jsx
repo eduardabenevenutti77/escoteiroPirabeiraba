@@ -1,23 +1,36 @@
-import styles from "./styles/EventCard.module.css"
 import PropTypes from "prop-types"
+import styles from "./styles/EventCard.module.css"
+
+// 🧭 Função que garante exibição correta da data independente do fuso horário
+const parseLocalDate = (dateString) => {
+    // Cria a data como se fosse UTC, evitando offset de timezone local
+    const [year, month, day] = dateString.split("-").map(Number)
+    return new Date(Date.UTC(year, month - 1, day))
+}
 
 const EventCard = ({ event }) => {
+    // 📅 Formata a data completa (ex: 13 de outubro de 2025)
     const formatDate = (dateString) => {
-        const date = new Date(dateString)
+        if (!dateString) return ""
+        const date = parseLocalDate(dateString)
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "long",
             year: "numeric",
         })
     }
+
+    // 📆 Mostra apenas dia e mês (ex: 13/10)
     const formatDateMonth = (dateString) => {
-        const date = new Date(dateString)
+        if (!dateString) return ""
+        const date = parseLocalDate(dateString)
         return date.toLocaleDateString("pt-BR", {
-            day: "numeric",
-            month: "numeric",
+            day: "2-digit",
+            month: "2-digit",
         })
     }
 
+    // ⏰ Formata o horário (mantém HH:MM)
     const formatTime = (timeString) => {
         return timeString ? timeString.substring(0, 5) : ""
     }
@@ -37,7 +50,6 @@ const EventCard = ({ event }) => {
                         {formatDateMonth(event.event_date)}
                     </span>
                 </div>
-
             </div>
 
             <div className={styles.eventContent}>
@@ -51,7 +63,9 @@ const EventCard = ({ event }) => {
 
                     <div className={styles.eventDetail}>
                         <span className={styles.detailIcon}>📅</span>
-                        <span className={styles.detailText}>{formatDate(event.event_date)}</span>
+                        <span className={styles.detailText}>
+                            {formatDate(event.event_date)}
+                        </span>
                     </div>
 
                     <div className={styles.eventDetail}>
@@ -69,11 +83,11 @@ const EventCard = ({ event }) => {
 EventCard.propTypes = {
     event: PropTypes.shape({
         title: PropTypes.string.isRequired,
-        image_url: PropTypes.string,  // corrigido
+        image_url: PropTypes.string,
         location: PropTypes.string.isRequired,
-        event_date: PropTypes.string.isRequired, // corrigido
-        event_time: PropTypes.string, // corrigido
-    }).isRequired
+        event_date: PropTypes.string.isRequired,
+        event_time: PropTypes.string,
+    }).isRequired,
 }
 
 export default EventCard
