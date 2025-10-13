@@ -1,11 +1,16 @@
 import PropTypes from "prop-types"
 import styles from "./styles/EventListItem.module.css"
 
-// 🧭 Corrige o problema de timezone garantindo que a data exibida seja a correta
+// 🧭 Interpreta corretamente datas AAAA-MM-DD ou ISO (mantendo o dia correto)
 const parseLocalDate = (dateString) => {
     if (!dateString) return new Date()
+
+    if (dateString.includes("T")) {
+        const date = new Date(dateString)
+        return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    }
+
     const [year, month, day] = dateString.split("-").map(Number)
-    // Cria a data baseada em UTC para evitar deslocamento de fuso horário
     return new Date(Date.UTC(year, month - 1, day))
 }
 

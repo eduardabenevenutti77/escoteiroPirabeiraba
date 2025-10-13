@@ -2,29 +2,28 @@ import api from "./api"
 
 const isDevelopment = import.meta.env.MODE === "development"
 
-// 🧭 Função que garante que a data seja interpretada exatamente como enviada (sem offset)
+// 🧭 Converte a string de data para UTC sem deslocar o dia
 const parseLocalDate = (dateString, timeString = "00:00") => {
     if (!dateString) return new Date()
     const [year, month, day] = dateString.split("-").map(Number)
     const [hours, minutes] = timeString.split(":").map(Number)
-    // Cria uma data UTC exata sem aplicar o fuso horário local
     return new Date(Date.UTC(year, month - 1, day, hours, minutes))
 }
 
+// 📅 Garante que os eventos tenham campos de data válidos e consistentes
 const formatEventData = (event) => {
-    // Garante formato de hora
     const eventTime = event.event_time || "00:00"
 
-    // Usa UTC para manter a data idêntica ao backend
     const eventDate = parseLocalDate(event.event_date, eventTime)
+
+    // 🔥 Garante que event.event_date seja sempre retornado no formato YYYY-MM-DD
+    const normalizedDate = eventDate.toISOString().split("T")[0]
 
     return {
         ...event,
-        // Mantém a data original (sem timezone shift)
-        event_date: event.event_date,
+        event_date: normalizedDate, // <-- retorna data garantida
         event_time: eventTime,
-        // Data/hora combinadas em UTC para comparações seguras
-        event_datetime: eventDate,
+        event_datetime: eventDate, // objeto Date seguro
         image_url: event.image_url || "/placeholder.svg",
         location: event.location || "Local a definir",
         status: event.status || "pendente",
@@ -42,31 +41,41 @@ export const eventService = {
                 throw new Error("Formato de resposta inválido da API")
             }
 
-            // 🧩 Normaliza e corrige fuso horário
+            // 🧩 Normaliza todas as datas
             const formattedEvents = events.map(formatEventData)
 
-            // 🔥 Data atual em UTC para comparação justa
+            // 🔥 Cria referência de "agora" em UTC
             const now = new Date()
             const nowUTC = new Date(
-                Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes())
+                Date.UTC(
+                    now.getUTCFullYear(),
+                    now.getUTCMonth(),
+                    now.getUTCDate(),
+                    now.getUTCHours(),
+                    now.getUTCMinutes()
+                )
             )
 
-            // 🔎 Separa futuros e passados (ignora cancelados)
+            // 🕐 Separa próximos e passados
             const upcoming = formattedEvents.filter(
-                (event) => event.event_datetime >= nowUTC && event.status !== "cancelado"
+                (event) =>
+                    event.event_datetime >= nowUTC && event.status !== "cancelado"
             )
 
             const past = formattedEvents.filter(
-                (event) => event.event_datetime < nowUTC && event.status !== "cancelado"
+                (event) =>
+                    event.event_datetime < nowUTC && event.status !== "cancelado"
             )
 
-            // 📅 Ordenação coerente
+            // 🗓️ Ordenação coerente
             upcoming.sort((a, b) => a.event_datetime - b.event_datetime)
             past.sort((a, b) => b.event_datetime - a.event_datetime)
 
+            // ✅ Retorna com a data correta no payload
             return {
-                upcoming: upcoming.slice(0, 6), // próximos 6
-                past: past.slice(0, 10), // últimos 10
+                upcoming: upcoming.slice(0, 6),
+                past: past.slice(0, 10),
+                all: formattedEvents, // <-- útil para debug e fallback
             }
         } catch (error) {
             console.error("Erro ao buscar eventos:", error)

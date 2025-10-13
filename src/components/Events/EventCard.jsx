@@ -1,15 +1,22 @@
 import PropTypes from "prop-types"
 import styles from "./styles/EventCard.module.css"
 
-// 🧭 Função que garante exibição correta da data independente do fuso horário
+// 🧭 Função robusta que interpreta corretamente o formato da data (AAAA-MM-DD ou ISO)
 const parseLocalDate = (dateString) => {
-    // Cria a data como se fosse UTC, evitando offset de timezone local
+    if (!dateString) return new Date()
+
+    // Trata formato ISO (ex: 2025-10-13T00:00:00Z)
+    if (dateString.includes("T")) {
+        const date = new Date(dateString)
+        return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
+    }
+
+    // Trata formato AAAA-MM-DD
     const [year, month, day] = dateString.split("-").map(Number)
     return new Date(Date.UTC(year, month - 1, day))
 }
 
 const EventCard = ({ event }) => {
-    // 📅 Formata a data completa (ex: 13 de outubro de 2025)
     const formatDate = (dateString) => {
         if (!dateString) return ""
         const date = parseLocalDate(dateString)
@@ -17,20 +24,20 @@ const EventCard = ({ event }) => {
             day: "2-digit",
             month: "long",
             year: "numeric",
+            timeZone: "UTC",
         })
     }
 
-    // 📆 Mostra apenas dia e mês (ex: 13/10)
     const formatDateMonth = (dateString) => {
         if (!dateString) return ""
         const date = parseLocalDate(dateString)
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
+            timeZone: "UTC",
         })
     }
 
-    // ⏰ Formata o horário (mantém HH:MM)
     const formatTime = (timeString) => {
         return timeString ? timeString.substring(0, 5) : ""
     }
