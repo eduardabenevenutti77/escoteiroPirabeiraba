@@ -1,5 +1,4 @@
 import api from './api';
-import { mockEvents } from './mockData';
 
 const isDevelopment = import.meta.env.MODE === 'development';
 
@@ -24,34 +23,34 @@ const formatEventData = (event) => {
 export const eventService = {
     async getEvents() {
         try {
-            if (isDevelopment) {
-                // Simular um pequeno delay para simular uma chamada de API
-                await new Promise(resolve => setTimeout(resolve, 500));
+            // if (isDevelopment) {
+            //     // Simular um pequeno delay para simular uma chamada de API
+            //     await new Promise(resolve => setTimeout(resolve, 500));
 
-                const now = new Date();
+            //     const now = new Date();
 
-                // Separar eventos futuros e passados, excluindo os cancelados
-                const upcoming = mockEvents.filter((event) =>
-                    new Date(event.event_date) >= now && event.status !== 'cancelado'
-                );
-                const past = mockEvents.filter((event) =>
-                    new Date(event.event_date) < now && event.status !== 'cancelado'
-                );
+            //     // Separar eventos futuros e passados, excluindo os cancelados
+            //     const upcoming = mockEvents.filter((event) =>
+            //         new Date(event.event_date) >= now && event.status !== 'cancelado'
+            //     );
+            //     const past = mockEvents.filter((event) =>
+            //         new Date(event.event_date) < now && event.status !== 'cancelado'
+            //     );
 
-                // Ordenar eventos
-                upcoming.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
-                past.sort((a, b) => new Date(b.event_date) - new Date(a.event_date));
+            //     // Ordenar eventos
+            //     upcoming.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+            //     past.sort((a, b) => new Date(b.event_date) - new Date(a.event_date));
 
-                return {
-                    upcoming: upcoming.slice(0, 6), // Mostrar apenas os próximos 6
-                    past: past.slice(0, 10) // Mostrar apenas os últimos 10
-                };
-            }
+            //     return {
+            //         upcoming: upcoming.slice(0, 6), // Mostrar apenas os próximos 6
+            //         past: past.slice(0, 10) // Mostrar apenas os últimos 10
+            //     };
+            // }
 
             const response = await api.get('/api/events', {
-                headers: {
-                    'x-api-key': import.meta.env.VITE_API_KEY,
-                }
+                // headers: {
+                //     'x-api-key': import.meta.env.VITE_API_KEY,
+                // }
             });
 
             const { events } = response.data;
