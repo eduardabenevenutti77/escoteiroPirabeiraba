@@ -1,6 +1,6 @@
-import { parseLocalDate } from "@/utils/parseLocalDate";
 import PropTypes from "prop-types";
 import styles from "./styles/EventListItem.module.css";
+import { parseLocalDate } from "../../utils/parseLocalDate";
 
 // 🗓️ Item da lista de eventos (compacto)
 const EventListItem = ({ event }) => {

@@ -1,6 +1,6 @@
-import { parseLocalDate } from "@/utils/parseLocalDate";
 import PropTypes from "prop-types";
 import styles from "./styles/EventCard.module.css";
+import { parseLocalDate } from "../../utils/parseLocalDate";
 
 // 🗓️ Componente que exibe um evento em formato de card
 const EventCard = ({ event }) => {
