@@ -2,9 +2,7 @@ import PropTypes from "prop-types";
 import { parseLocalDate } from "../../utils/parseLocalDate";
 import styles from "./styles/EventCard.module.css";
 
-// 🗓️ Componente que exibe um evento em formato de card
 const EventCard = ({ event }) => {
-    // 📅 Data completa (ex: 13 de outubro de 2025)
     const formatDate = (dateString) => {
         if (!dateString) return "";
         const date = parseLocalDate(dateString);
@@ -15,7 +13,6 @@ const EventCard = ({ event }) => {
         });
     };
 
-    // 📆 Dia e mês abreviado (ex: 13/10)
     const formatDateMonth = (dateString) => {
         if (!dateString) return "";
         const date = parseLocalDate(dateString);
@@ -25,8 +22,11 @@ const EventCard = ({ event }) => {
         });
     };
 
-    // ⏰ Apenas hora e minuto
-    const formatTime = (timeString) => (timeString ? timeString.substring(0, 5) : "");
+    const formatTime = (timeString) => {
+        if (!timeString) return "";
+        const [hours, minutes] = timeString.split(":");
+        return `${hours}:${minutes}`;
+    };
 
     return (
         <div className={styles.eventCard}>
@@ -56,12 +56,16 @@ const EventCard = ({ event }) => {
 
                     <div className={styles.eventDetail}>
                         <span className={styles.detailIcon}>📅</span>
-                        <span className={styles.detailText}>{formatDate(event.event_date)}</span>
+                        <span className={styles.detailText}>
+                            {formatDate(event.event_date)}
+                        </span>
                     </div>
 
                     <div className={styles.eventDetail}>
                         <span className={styles.detailIcon}>🕐</span>
-                        <span className={styles.detailText}>{formatTime(event.event_time)}</span>
+                        <span className={styles.detailText}>
+                            {formatTime(event.event_time)}
+                        </span>
                     </div>
                 </div>
             </div>

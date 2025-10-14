@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { parseLocalDate } from "../../utils/parseLocalDate";
 import styles from "./styles/EventListItem.module.css";
 
-// 🗓️ Item da lista de eventos (compacto)
 const EventListItem = ({ event }) => {
     const formatDate = (dateString) => {
         const date = parseLocalDate(dateString);
@@ -16,7 +15,11 @@ const EventListItem = ({ event }) => {
         };
     };
 
-    const formatTime = (timeString) => (timeString ? timeString.substring(0, 5) : "");
+    const formatTime = (timeString) => {
+        if (!timeString) return "";
+        const [hours, minutes] = timeString.split(":");
+        return `${hours}:${minutes}`;
+    };
 
     const dateInfo = formatDate(event.event_date);
 
