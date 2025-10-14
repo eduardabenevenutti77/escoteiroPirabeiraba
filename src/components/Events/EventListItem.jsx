@@ -1,18 +1,18 @@
 import PropTypes from "prop-types";
-import styles from "./styles/EventListItem.module.css";
 import { parseLocalDate } from "../../utils/parseLocalDate";
+import styles from "./styles/EventListItem.module.css";
 
 // 🗓️ Item da lista de eventos (compacto)
 const EventListItem = ({ event }) => {
     const formatDate = (dateString) => {
         const date = parseLocalDate(dateString);
         return {
-            day: date.getUTCDate().toString().padStart(2, "0"),
+            day: date.getDate().toString().padStart(2, "0"),
             month: date
-                .toLocaleDateString("pt-BR", { month: "short", timeZone: "UTC" })
+                .toLocaleDateString("pt-BR", { month: "short" })
                 .replace(".", "")
                 .toUpperCase(),
-            year: date.getUTCFullYear(),
+            year: date.getFullYear(),
         };
     };
 

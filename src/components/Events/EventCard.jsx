@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
-import styles from "./styles/EventCard.module.css";
 import { parseLocalDate } from "../../utils/parseLocalDate";
+import styles from "./styles/EventCard.module.css";
 
 // 🗓️ Componente que exibe um evento em formato de card
 const EventCard = ({ event }) => {
@@ -12,7 +12,6 @@ const EventCard = ({ event }) => {
             day: "2-digit",
             month: "long",
             year: "numeric",
-            timeZone: "UTC",
         });
     };
 
@@ -23,7 +22,6 @@ const EventCard = ({ event }) => {
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
-            timeZone: "UTC",
         });
     };
 
