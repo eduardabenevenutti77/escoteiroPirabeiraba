@@ -1,32 +1,27 @@
-import PropTypes from "prop-types"
-import styles from "./styles/EventListItem.module.css"
-
-// 🧭 Corrige o problema de timezone garantindo que a data exibida seja a correta
-const parseLocalDate = (dateString) => {
-    if (!dateString) return new Date()
-    const [year, month, day] = dateString.split("-").map(Number)
-    // Cria a data baseada em UTC para evitar deslocamento de fuso horário
-    return new Date(Date.UTC(year, month - 1, day))
-}
+import PropTypes from "prop-types";
+import { parseLocalDate } from "../../utils/parseLocalDate";
+import styles from "./styles/EventListItem.module.css";
 
 const EventListItem = ({ event }) => {
     const formatDate = (dateString) => {
-        const date = parseLocalDate(dateString)
+        const date = parseLocalDate(dateString);
         return {
-            day: date.getUTCDate().toString().padStart(2, "0"),
+            day: date.getDate().toString().padStart(2, "0"),
             month: date
-                .toLocaleDateString("pt-BR", { month: "short", timeZone: "UTC" })
+                .toLocaleDateString("pt-BR", { month: "short" })
                 .replace(".", "")
                 .toUpperCase(),
-            year: date.getUTCFullYear(),
-        }
-    }
+            year: date.getFullYear(),
+        };
+    };
 
     const formatTime = (timeString) => {
-        return timeString ? timeString.substring(0, 5) : ""
-    }
+        if (!timeString) return "";
+        const [hours, minutes] = timeString.split(":");
+        return `${hours}:${minutes}`;
+    };
 
-    const dateInfo = formatDate(event.event_date)
+    const dateInfo = formatDate(event.event_date);
 
     return (
         <div className={styles.eventListItem}>
@@ -44,8 +39,8 @@ const EventListItem = ({ event }) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 EventListItem.propTypes = {
     event: PropTypes.shape({
@@ -54,6 +49,6 @@ EventListItem.propTypes = {
         event_time: PropTypes.string,
         location: PropTypes.string.isRequired,
     }).isRequired,
-}
+};
 
-export default EventListItem
+export default EventListItem;

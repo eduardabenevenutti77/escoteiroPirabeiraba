@@ -1,39 +1,32 @@
-import PropTypes from "prop-types"
-import styles from "./styles/EventCard.module.css"
-
-// 🧭 Função que garante exibição correta da data independente do fuso horário
-const parseLocalDate = (dateString) => {
-    // Cria a data como se fosse UTC, evitando offset de timezone local
-    const [year, month, day] = dateString.split("-").map(Number)
-    return new Date(Date.UTC(year, month - 1, day))
-}
+import PropTypes from "prop-types";
+import { parseLocalDate } from "../../utils/parseLocalDate";
+import styles from "./styles/EventCard.module.css";
 
 const EventCard = ({ event }) => {
-    // 📅 Formata a data completa (ex: 13 de outubro de 2025)
     const formatDate = (dateString) => {
-        if (!dateString) return ""
-        const date = parseLocalDate(dateString)
+        if (!dateString) return "";
+        const date = parseLocalDate(dateString);
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "long",
             year: "numeric",
-        })
-    }
+        });
+    };
 
-    // 📆 Mostra apenas dia e mês (ex: 13/10)
     const formatDateMonth = (dateString) => {
-        if (!dateString) return ""
-        const date = parseLocalDate(dateString)
+        if (!dateString) return "";
+        const date = parseLocalDate(dateString);
         return date.toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
-        })
-    }
+        });
+    };
 
-    // ⏰ Formata o horário (mantém HH:MM)
     const formatTime = (timeString) => {
-        return timeString ? timeString.substring(0, 5) : ""
-    }
+        if (!timeString) return "";
+        const [hours, minutes] = timeString.split(":");
+        return `${hours}:${minutes}`;
+    };
 
     return (
         <div className={styles.eventCard}>
@@ -77,8 +70,8 @@ const EventCard = ({ event }) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 EventCard.propTypes = {
     event: PropTypes.shape({
@@ -88,6 +81,6 @@ EventCard.propTypes = {
         event_date: PropTypes.string.isRequired,
         event_time: PropTypes.string,
     }).isRequired,
-}
+};
 
-export default EventCard
+export default EventCard;
