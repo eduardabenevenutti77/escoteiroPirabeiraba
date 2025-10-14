@@ -1,4 +1,4 @@
-const parseLocalDate = (dateString, timeString = "00:00") => {
+export const parseLocalDate = (dateString, timeString = "00:00") => {
     if (!dateString) return new Date();
 
     const cleanDate = dateString.includes("T")
