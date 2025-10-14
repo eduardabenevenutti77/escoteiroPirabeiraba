@@ -3,6 +3,9 @@ export const parseLocalDate = (dateString) => {
 
     const cleanDate = dateString.split("T")[0];
     const [year, month, day] = cleanDate.split("-").map(Number);
-    
-    return new Date(year, month - 1, day);
+
+    const fixed = new Date(Date.UTC(year, month - 1, day));
+    fixed.setMinutes(fixed.getMinutes() + fixed.getTimezoneOffset());
+
+    return fixed;
 };
