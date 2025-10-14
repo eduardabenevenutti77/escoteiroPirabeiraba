@@ -7,23 +7,40 @@ const parseLocalDate = (dateString, timeString = "00:00") => {
     if (!dateString) return new Date()
     const [year, month, day] = dateString.split("-").map(Number)
     const [hours, minutes] = timeString.split(":").map(Number)
-    return new Date(Date.UTC(year, month - 1, day, hours, minutes))
+
+    // Garante que todos os números são válidos
+    if (
+        !year ||
+        !month ||
+        !day ||
+        Number.isNaN(year) ||
+        Number.isNaN(month) ||
+        Number.isNaN(day)
+    ) {
+        return new Date("Invalid Date")
+    }
+
+    return new Date(Date.UTC(year, month - 1, day, hours || 0, minutes || 0))
 }
 
 // 📅 Garante que os eventos tenham campos de data válidos e consistentes
 const formatEventData = (event) => {
     const eventTime = event.event_time || "00:00"
-
     const eventDate = parseLocalDate(event.event_date, eventTime)
 
-    // 🔥 Garante que event.event_date seja sempre retornado no formato YYYY-MM-DD
-    const normalizedDate = eventDate.toISOString().split("T")[0]
+    // ⚙️ Proteção: se a data for inválida, evita .toISOString()
+    let normalizedDate = event.event_date
+    if (!isNaN(eventDate.getTime())) {
+        normalizedDate = eventDate.toISOString().split("T")[0]
+    } else {
+        console.warn("⚠️ Data inválida detectada:", event.event_date)
+    }
 
     return {
         ...event,
-        event_date: normalizedDate, // <-- retorna data garantida
+        event_date: normalizedDate || "",
         event_time: eventTime,
-        event_datetime: eventDate, // objeto Date seguro
+        event_datetime: isNaN(eventDate.getTime()) ? null : eventDate, // evita erro de Date inválida
         image_url: event.image_url || "/placeholder.svg",
         location: event.location || "Local a definir",
         status: event.status || "pendente",
@@ -56,15 +73,19 @@ export const eventService = {
                 )
             )
 
-            // 🕐 Separa próximos e passados
+            // 🕐 Separa próximos e passados (ignora cancelados)
             const upcoming = formattedEvents.filter(
                 (event) =>
-                    event.event_datetime >= nowUTC && event.status !== "cancelado"
+                    event.event_datetime &&
+                    event.event_datetime >= nowUTC &&
+                    event.status !== "cancelado"
             )
 
             const past = formattedEvents.filter(
                 (event) =>
-                    event.event_datetime < nowUTC && event.status !== "cancelado"
+                    event.event_datetime &&
+                    event.event_datetime < nowUTC &&
+                    event.status !== "cancelado"
             )
 
             // 🗓️ Ordenação coerente
@@ -75,7 +96,7 @@ export const eventService = {
             return {
                 upcoming: upcoming.slice(0, 6),
                 past: past.slice(0, 10),
-                all: formattedEvents, // <-- útil para debug e fallback
+                all: formattedEvents, // útil para debug
             }
         } catch (error) {
             console.error("Erro ao buscar eventos:", error)
