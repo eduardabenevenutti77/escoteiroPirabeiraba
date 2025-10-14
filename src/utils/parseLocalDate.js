@@ -1,10 +1,12 @@
-export const parseLocalDate = (dateString) => {
+const parseLocalDate = (dateString, timeString = "00:00") => {
     if (!dateString) return new Date();
-    if (dateString.includes("T")) {
-        const d = new Date(dateString);
-        return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-    }
 
-    const [y, m, d] = dateString.split("-").map(Number);
-    return new Date(Date.UTC(y, m - 1, d));
+    const cleanDate = dateString.includes("T")
+        ? dateString.split("T")[0]
+        : dateString;
+
+    const [year, month, day] = cleanDate.split("-").map(Number);
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    return new Date(Date.UTC(year, month - 1, day, hours || 0, minutes || 0));
 };
